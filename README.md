@@ -2,6 +2,10 @@
 
 This repository contains the end-to-end implementation of **CustomerGPT**, a specialized customer support LLM fine-tuned on customer queries and multi-turn service dialogs. The project encompasses a comprehensive 10-step data engineering pipeline (Phase 4A) followed by Parameter-Efficient Fine-Tuning (PEFT) using QLoRA.
 
+### 🔗 Quick Links
+* **GitHub Repository:** [CustomerGPT-FineTunning-1](https://github.com/RudrakshRakeshZodage/CustomerGPT-FineTunning-1)
+* **Hugging Face Model Page:** [rudrakshrakeshzodage/CustomerGPT-0.5B-LoRA](https://huggingface.co/rudrakshrakeshzodage/CustomerGPT-0.5B-LoRA)
+
 ---
 
 ## 📌 Project Architecture & Workflow
@@ -9,33 +13,47 @@ This repository contains the end-to-end implementation of **CustomerGPT**, a spe
 The architecture is divided into two primary phases: the **Data Engineering & Enrichment Pipeline** and the **QLoRA Fine-Tuning Loop**.
 
 ```mermaid
-flowchart TD
-    subgraph Data Pipeline [10-Step Data Engineering Pipeline]
-        A[Raw Dataset: 26.8K CSV] --> B[Step 1: EDA & Analysis]
-        B --> C[Step 2: Data Cleaning & Deduplication]
-        C --> D[Step 3: Quality Scoring & Filtering]
-        D --> E[Step 4: Semantic Enrichment <br/> Sentiment, Urgency, Escalation]
-        E --> F[Step 5: Synthetic Augmentation <br/> Typos, Paraphrases, Short/Long]
-        F --> G[Step 6: Chat Formatting <br/> Alpaca, ChatML, Qwen Templates]
-        G --> H[Step 7: Schema Validation]
-        H --> I[Step 8: Tokenization Analysis]
-        I --> J[Step 9: Partition Split <br/> 80% Train / 10% Val / 10% Test]
-        J --> K[Step 10: Consolidated Reporting <br/> PDF, JSON, CSV]
-    end
+sequenceDiagram
+    autonumber
+    actor User as User (CLI/Developer)
+    participant Pipeline as run_pipeline.py (Orchestrator)
+    participant Storage as Local Storage (Disk)
+    participant Trainer as train_manual.py (GPU Training)
+    participant HF as Hugging Face Hub (Remote)
 
-    subgraph Fine Tuning [PEFT Model Training]
-        K --> L[Formatted Train/Val JSONL]
-        L --> M[Base Model: Qwen2.5-0.5B-Instruct]
-        M --> N[4-bit Quantization <br/> nf4, Double Quant]
-        N --> O[Apply LoRA Adapter <br/> Rank=16, Alpha=32]
-        O --> P[SFT Training Run <br/> Cosine Decay, AdamW]
-        P --> Q[Save Fine-Tuned PEFT Adapter]
-    end
+    Note over User, Storage: Phase 1: Data Preparation & Quality Pipeline
+    User->>Pipeline: Run pipeline (quality_threshold=5.0)
+    activate Pipeline
+    Pipeline->>Storage: Read Raw Dataset (26.8K CSV)
+    Storage-->>Pipeline: Return CSV rows
+    Pipeline->>Pipeline: Clean, Filter, Enrich, & Augment Data (107K samples)
+    Pipeline->>Storage: Save Train/Val/Test JSONL datasets (Alpaca, ChatML, Qwen)
+    Pipeline->>User: Pipeline completed (PDF/JSON reports ready)
+    deactivate Pipeline
 
-    subgraph Interface [Inference & Evaluation]
-        Q --> R[Interactive Chatbot CLI <br/> chat_interactive.py]
-        Q --> S[Quantitative Evaluation <br/> evaluate_manual.py]
-    end
+    Note over User, Trainer: Phase 2: QLoRA Fine-Tuning
+    User->>Trainer: Trigger Fine-Tuning (Qwen2.5-0.5B)
+    activate Trainer
+    Trainer->>Storage: Load Train & Validation JSONL splits
+    Storage-->>Trainer: Dataset records
+    Trainer->>Trainer: Initialize model in 4-bit (NF4, Double Quant)
+    Trainer->>Trainer: Attach LoRA Adapter (Rank 16, Alpha 32)
+    Trainer->>Trainer: Run Supervised Fine-Tuning (SFT) for 700 steps
+    Trainer->>Storage: Save PEFT adapters to outputs_manual/
+    Trainer-->>User: Training finished (Loss: 0.6336, saved adapter)
+    deactivate Trainer
+
+    Note over User, HF: Phase 3: Hub Deployment & Chat Integration
+    User->>Storage: Run upload_to_hf.py
+    activate Storage
+    Storage->>HF: Push model folder (rudrakshrakeshzodage/CustomerGPT-0.5B-LoRA)
+    HF-->>Storage: Confirm successful upload (model page updated)
+    deactivate Storage
+    User->>Storage: Launch chat_interactive.py
+    activate Storage
+    Storage->>Storage: Load 4-bit base model + Local adapter
+    Storage-->>User: Interactive CLI Prompt (CustomerGPT ready)
+    deactivate Storage
 ```
 
 ---
