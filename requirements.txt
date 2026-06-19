@@ -1,0 +1,7 @@
+pandas
+numpy
+matplotlib
+seaborn
+transformers
+fpdf2
+tqdm

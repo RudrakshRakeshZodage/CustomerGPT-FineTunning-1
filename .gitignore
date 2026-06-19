@@ -1,0 +1,41 @@
+# Large Dataset Files (GitHub limits files to 100MB)
+data/
+
+# Model outputs and training checkpoints
+outputs/
+outputs_manual/
+dry_run_outputs/
+dry_run_manual/
+
+# Python Virtual Environments and Packages
+venv/
+.venv/
+env/
+.env/
+venv_312/
+venv_313/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Logs and Python caches
+*.log
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.gemini/

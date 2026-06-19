@@ -1,0 +1,18 @@
+# 1. SETUP VIRTUAL ENVIRONMENT & ACTIVATE (Python 3.11)
+# py -3.11 -m venv venv
+# .\venv\Scripts\activate
+
+# 2. INSTALL PYTORCH CUDA 12.1 (RTX 4060 compatible)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# 3. INSTALL COMPATIBLE DEEP LEARNING LIBRARIES
+pip install transformers==4.47.1 trl==0.12.1 peft accelerate bitsandbytes datasets tqdm
+
+# 4. RUN A 5-STEP DRY RUN (VERIFICATION) ON QWEN 0.5B
+python train_manual.py --model_name Qwen/Qwen2.5-0.5B-Instruct --max_steps 5 --output_dir dry_run_manual
+
+# 5. START FULL TRAINING RUN (1 EPOCH)
+python train_manual.py --model_name Qwen/Qwen2.5-0.5B-Instruct --epochs 1 --output_dir outputs_manual
+
+# 6. RUN MODEL INFERENCE EVALUATION
+python evaluate_manual.py --base_model Qwen/Qwen2.5-0.5B-Instruct --adapter_path outputs_manual/manual_lora_adapter --samples 3

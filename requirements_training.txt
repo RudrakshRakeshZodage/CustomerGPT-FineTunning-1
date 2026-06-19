@@ -1,0 +1,7 @@
+unsloth
+torch
+xformers
+trl
+peft
+accelerate
+bitsandbytes

@@ -1,0 +1,31 @@
+==========================================================
+CUSTOMERGPT FINE-TUNING ACTUAL TRAINING METRICS (700 STEPS)
+==========================================================
+Date: 2026-06-19
+Model: Qwen/Qwen2.5-0.5B-Instruct
+Hardware: NVIDIA GeForce RTX 4060 Laptop GPU (4-bit Quantization)
+Trainable Parameters: 8,798,208 (1.75% of total 502,830,976)
+
+Training Parameters:
+----------------------------------------------------------
+- Total Steps: 700
+- Batch Size: 1
+- Gradient Accumulation Steps: 8 (Effective batch size = 8)
+- Optimizer: adamw_torch
+- Learning Rate Schedule: Cosine decay (max 2e-4)
+
+Training Progress:
+----------------------------------------------------------
+- Step 1 Loss: 2.4139
+- Step 140 Loss: 0.8520
+- Step 700 Loss (Final): 0.6336
+
+Summary of Results:
+----------------------------------------------------------
+- Total Training Time: 2293.04 seconds (~38.2 minutes)
+- Training Speed: 0.305 steps/second (~3.28 seconds per step)
+- Final Training Loss: 0.8391 (Average over all steps)
+- Learning Rate finished at: 0.0 (Successfully completed decay)
+- Saving Target: outputs_manual/manual_lora_adapter (PEFT/LoRA Adapter)
+
+The training completed successfully and the adapter weights have been saved. The loss decreased steadily, showing the model has successfully learned the dataset patterns!
